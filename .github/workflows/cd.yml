@@ -11,9 +11,25 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: "1.23.0"
+
       - name: build binary
         run: ./scripts/buildprod.sh
+
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
+
+      - name: submit build
+        run: us-central1-docker.pkg.dev/notely-457501/notely-ar-repo/notely:latest
